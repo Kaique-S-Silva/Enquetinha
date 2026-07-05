@@ -3,6 +3,8 @@ from discord.ext import commands
 from dotenv import load_dotenv
 import os
 
+import src.database.connection as sql
+
 load_dotenv()
 
 TOKEN: str | None = os.getenv("TOKEN")
@@ -13,6 +15,7 @@ class MyBot(commands.Bot):
         super().__init__(command_prefix=".", intents=intents)
     
     async def setup_hook(self):
+        await sql.create_tables()
         for filename in os.listdir("./src/commands"):
             if filename.endswith(".py"):
                 await self.load_extension(f"src.commands.{filename[:-3]}")

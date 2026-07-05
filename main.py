@@ -21,6 +21,11 @@ class MyBot(commands.Bot):
     
     async def on_ready(self):
         print(f"Logged as {self.user}")
+    
+    async def on_guild_join(self, guild):
+        if str(guild.id) != os.getenv("ALLOWED_GUILD_ID"):
+            print("Servidor não autorizado")
+            await guild.leave()
 
 bot = MyBot()
 

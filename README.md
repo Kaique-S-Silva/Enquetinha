@@ -28,14 +28,26 @@ Bot de Discord para criação de enquetes usando **Slash Commands** e **botões 
 1. Clone o repositório:
 
    ```bash
-   git clone <url-do-repositorio>
+   git clone https://github.com/Kaique-S-Silva/Enquetinha
    cd Enquetinha
+
    ```
 
-2. Instale as dependências e crie o ambiente virtual automaticamente:
+2. Instale as dependências descritas em pyproject.toml
 
-   ```bash
-   uv sync
+   ```toml
+   [project]
+   name = "enquetinha"
+   version = "0.1.0"
+   description = "Add your description here"
+   readme = "README.md"
+   requires-python = ">=3.14"
+   dependencies = [
+      "aiosqlite>=0.22.1",
+      "discord-py>=2.7.1",
+      "python-dotenv>=1.2.2",
+   ]
+
    ```
 
 3. Crie um arquivo `.env` na raiz do projeto com o token do seu bot:
@@ -62,7 +74,7 @@ Bot de Discord para criação de enquetes usando **Slash Commands** e **botões 
 ## Executando o bot
 
 ```bash
-uv run main.py
+python main.py
 ```
 
 Se tudo estiver configurado corretamente, o terminal deve exibir:
@@ -79,32 +91,31 @@ No servidor onde o bot foi adicionado, digite:
 /poll
 ```
 
-Preencha a pergunta e as opções desejadas (mínimo 2, máximo 5). O bot enviará uma mensagem com um botão para cada opção — basta clicar para votar.
+Preencha a pergunta e as opções desejadas (mínimo 2, máximo 5). O bot enviará em embed com a seleção de escolhas. Escolha uma e o voto será contado. O tempo de timeout é contado em segundos, se não for dado, a enquete ficará infinitamente até algum administrador do servidor finaliza-lá manualmente.
 
 ## Estrutura do projeto
 
 ```text
 Enquetinha/
-├── main.py                  # Inicialização do bot e carregamento das extensões
-├── src/
-│   └── commands/
-│       └── poll.py          # Slash command /poll e lógica de votação
-├── pyproject.toml           # Dependências do projeto
-├── uv.lock                  # Versões travadas das dependências
-├── .python-version          # Versão do Python utilizada
-└── .env                     # Variáveis de ambiente (não versionado)
+├── data
+│   ├── (banco de dados fica aqui)
+├── docker-compose.yml
+├── Dockerfile
+├── main.py
+├── project.md
+├── pyproject.toml
+├── README.md
+├── src
+│   ├── commands
+│   │   ├── poll.py
+│   ├── database
+│   │   ├── connection.py
+│   │   └── schema.sql
+│   ├── utils
+│   │   ├── embed.py
+│   │   ├── formatting.py
+│   └── views
+│       ├── poll_view.py
+│       ├── poll_view_select.py
+└── uv.lock
 ```
-
-## Limitações conhecidas
-
-- Os votos são armazenados apenas em memória: caso o bot seja reiniciado, os dados de enquetes em andamento são perdidos.
-- Não há um mecanismo de encerramento automático ou manual das enquetes.
-
-Essas limitações já estão mapeadas e sendo avaliadas para futuras atualizações. Veja a seção [Próximos passos](#próximos-passos).
-
-## Próximos passos
-
-- [ ] Persistência dos votos (ex: SQLite), evitando perda de dados em caso de reinício do bot
-- [ ] Encerramento automático de enquetes por tempo (`timeout` na View)
-- [ ] Comando para encerramento manual da enquete
-- [ ] Views persistentes, para que botões de enquetes antigas continuem funcionando após reinícios do bot

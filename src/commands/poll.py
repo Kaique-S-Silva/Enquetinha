@@ -3,8 +3,8 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.database.connection import create_poll
-import src.utils.formatting as utils
-import src.views.poll_view as pv
+from src.utils.formatting import emoji_slash
+import src.views.poll_view_select as pv
 
 class Poll(commands.Cog):
     def __init__(self, bot):
@@ -20,11 +20,14 @@ class Poll(commands.Cog):
                    opcao1: str, opcao2: str, 
                    opcao3: str | None = None, opcao4: str | None = None, opcao5: str | None = None,
                    tempo: float | None = None):
+        
         options = [opcao1, opcao2, opcao3, opcao4, opcao5]
+
         optionsNotNone = [op for op in options if op is not None]
 
         if not interaction.guild_id:
             return
+        
         poll_id, options_id = await create_poll(pergunta, optionsNotNone, interaction.user.id, interaction.guild_id)
 
         pollview = pv.PollView(optionsNotNone, poll_id, options_id, tempo)
@@ -36,7 +39,7 @@ class Poll(commands.Cog):
         )
 
         for field in optionsNotNone:
-            embed.add_field(name=field, value=f"{utils.emoji_slash(0, 0)} {0} votos", inline=False)
+            embed.add_field(name=field, value=f"{emoji_slash(0, 0)} {0} votos", inline=False)
 
         embed.set_footer(text="Cada pessoa pode votar apenas uma vez.")
 

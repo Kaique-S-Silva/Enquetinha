@@ -116,11 +116,15 @@ class PollView(discord.ui.View):
 
             votes = counts.get(option.name, 0)
 
-            embed.set_field_at(
-                index=index,
-                name=option.name,
-                value=f"{emoji_slash(votes, total)} {votes} votos",
-                inline=option.inline
+            embed = update_embed(embed, counts)
+
+        if total > 0:
+            max_votos = max(counts.values())
+            winners = [name for name, votos in counts.items() if votos == max_votos]
+            embed.add_field(
+                name="🏆 Vencedor: ",
+                value=", ".join(winners),
+                inline=False
             )
 
         if interaction:
